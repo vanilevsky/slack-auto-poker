@@ -131,7 +131,8 @@ async function updateShortcutCardExternalLinks (cardId, externalLinks) {
   myHeaders.append("Content-Type", "application/json");
 
   const raw = JSON.stringify({
-    "external_links": externalLinks
+    "external_links": externalLinks, // Replace with new links
+    "labels": [], // Clear labels
   });
 
   const requestOptions = {
@@ -141,5 +142,6 @@ async function updateShortcutCardExternalLinks (cardId, externalLinks) {
     redirect: 'follow'
   };
 
+  // @see https://shortcut.com/api/rest/v3#Body-Parameters-40308
   return fetch(`https://api.app.shortcut.com/api/v3/stories/${cardId}`, requestOptions);
 }
