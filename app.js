@@ -1,20 +1,12 @@
 const { App, WorkflowStep } = require('@slack/bolt');
 const fetch = require("node-fetch");
 
-/*
-This sample slack application uses SocketMode
-For the companion getting started setup guide,
-see: https://slack.dev/bolt-js/tutorial/getting-started
-*/
-
-// Initializes your app with your bot token and app token
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   socketMode: true,
   appToken: process.env.SLACK_APP_TOKEN
 });
 
-// Listens to incoming messages that contain "hello"
 app.message('hello', async ({ message, say }) => {
   // say() sends a message to the channel where the event was triggered
   await say({
@@ -43,19 +35,6 @@ app.action('button_click', async ({ body, ack, say }) => {
   // Acknowledge the action
   await ack();
   await say(`<@${body.user.id}> clicked the button`);
-
-  // const shortcutCardId = 20312;
-  // const cardExternalLinks = [
-  //   "https://qonversion.slack.com/archives/C02RCC54C8K/p1668399131269969?poker"
-  // ];
-  //
-  // updateShortcutCardExternalLinks(shortcutCardId, cardExternalLinks)
-  //     .then(response => response.text())
-  //     .then(result => {
-  //       console.log(result);
-  //       say(`The card ${shortcutCardId} was updated`);
-  //     })
-  //     .catch(error => console.log('error', error));
 });
 
 const ws = new WorkflowStep('connect_with_poker', {
@@ -63,38 +42,6 @@ const ws = new WorkflowStep('connect_with_poker', {
     await ack();
 
     const blocks = [
-      {
-        type: 'input',
-        block_id: 'task_name_input',
-        element: {
-          type: 'plain_text_input',
-          action_id: 'name',
-          placeholder: {
-            type: 'plain_text',
-            text: 'Add a task name',
-          },
-        },
-        label: {
-          type: 'plain_text',
-          text: 'Task name',
-        },
-      },
-      {
-        type: 'input',
-        block_id: 'task_description_input',
-        element: {
-          type: 'plain_text_input',
-          action_id: 'description',
-          placeholder: {
-            type: 'plain_text',
-            text: 'Add a task description',
-          },
-        },
-        label: {
-          type: 'plain_text',
-          text: 'Task description',
-        },
-      },
       {
         type: 'input',
         block_id: 'shortcut_story_id_input',
@@ -135,29 +82,15 @@ const ws = new WorkflowStep('connect_with_poker', {
     await ack();
 
     const { values } = view.state;
-    const taskName = values.task_name_input.name;
-    const taskDescription = values.task_description_input.description;
     const storyId = values.shortcut_story_id_input.description;
     const pokerLink = values.slack_published_poker_link_input.description;
 
     const inputs = {
-      taskName: { value: taskName.value },
-      taskDescription: { value: taskDescription.value },
       storyId: { value: storyId.value },
       pokerLink: { value: pokerLink.value },
     };
 
     const outputs = [
-      {
-        type: 'text',
-        name: 'taskName',
-        label: 'Task name',
-      },
-      {
-        type: 'text',
-        name: 'taskDescription',
-        label: 'Task description',
-      },
       {
         type: 'text',
         name: 'storyId',
@@ -177,8 +110,6 @@ const ws = new WorkflowStep('connect_with_poker', {
     const { inputs } = step;
 
     const outputs = {
-      taskName: inputs.taskName.value,
-      taskDescription: inputs.taskDescription.value,
       shortcutCardId: inputs.storyId.value,
       cardExternalLinks: [
           inputs.pokerLink.value + '?poker',
@@ -187,10 +118,7 @@ const ws = new WorkflowStep('connect_with_poker', {
 
     updateShortcutCardExternalLinks(outputs.shortcutCardId, outputs.cardExternalLinks)
         .then(response => response.text())
-        .then(result => {
-          console.log(result);
-          say(`The card ${shortcutCardId} was updated`);
-        })
+        .then(result => console.log(result))
         .catch(error => console.log('error', error));
 
 
