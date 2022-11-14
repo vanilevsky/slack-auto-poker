@@ -43,6 +43,19 @@ app.action('button_click', async ({ body, ack, say }) => {
   // Acknowledge the action
   await ack();
   await say(`<@${body.user.id}> clicked the button`);
+
+  // const shortcutCardId = 20312;
+  // const cardExternalLinks = [
+  //   "https://qonversion.slack.com/archives/C02RCC54C8K/p1668399131269969?poker"
+  // ];
+  //
+  // updateShortcutCardExternalLinks(shortcutCardId, cardExternalLinks)
+  //     .then(response => response.text())
+  //     .then(result => {
+  //       console.log(result);
+  //       say(`The card ${shortcutCardId} was updated`);
+  //     })
+  //     .catch(error => console.log('error', error));
 });
 
 const ws = new WorkflowStep('connect_with_poker', {
@@ -82,6 +95,38 @@ const ws = new WorkflowStep('connect_with_poker', {
           text: 'Task description',
         },
       },
+      {
+        type: 'input',
+        block_id: 'shortcut_story_id_input',
+        element: {
+          type: 'plain_text_input',
+          action_id: 'story_id',
+          placeholder: {
+            type: 'plain_text',
+            text: 'Add a Shortcut story ID',
+          },
+        },
+        label: {
+          type: 'plain_text',
+          text: 'Story ID',
+        },
+      },
+      {
+        type: 'input',
+        block_id: 'slack_published_poker_link_input',
+        element: {
+          type: 'plain_text_input',
+          action_id: 'poker_link',
+          placeholder: {
+            type: 'plain_text',
+            text: 'Add a Slack link to published poker',
+          },
+        },
+        label: {
+          type: 'plain_text',
+          text: 'Poker link',
+        },
+      },
     ];
 
     await configure({ blocks });
@@ -92,10 +137,14 @@ const ws = new WorkflowStep('connect_with_poker', {
     const { values } = view.state;
     const taskName = values.task_name_input.name;
     const taskDescription = values.task_description_input.description;
+    const storyId = values.shortcut_story_id_input.description;
+    const pokerLink = values.slack_published_poker_link_input.description;
 
     const inputs = {
       taskName: { value: taskName.value },
-      taskDescription: { value: taskDescription.value }
+      taskDescription: { value: taskDescription.value },
+      storyId: { value: storyId.value },
+      pokerLink: { value: pokerLink.value },
     };
 
     const outputs = [
@@ -108,6 +157,16 @@ const ws = new WorkflowStep('connect_with_poker', {
         type: 'text',
         name: 'taskDescription',
         label: 'Task description',
+      },
+      {
+        type: 'text',
+        name: 'storyId',
+        label: 'Story ID',
+      },
+      {
+        type: 'text',
+        name: 'pokerLink',
+        label: 'Poker link',
       }
     ];
 
@@ -120,37 +179,19 @@ const ws = new WorkflowStep('connect_with_poker', {
     const outputs = {
       taskName: inputs.taskName.value,
       taskDescription: inputs.taskDescription.value,
-    };
-
-
-
-
-
-
-    const myHeaders = new fetch.Headers();
-    myHeaders.append("Shortcut-Token", "");
-    myHeaders.append("Content-Type", "application/json");
-
-    const raw = JSON.stringify({
-      "external_links": [
-        ""
+      shortcutCardId: inputs.storyId.value,
+      cardExternalLinks: [
+          inputs.pokerLink.value + '?poker',
       ]
-    });
-
-    const requestOptions = {
-      method: 'PUT',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
     };
 
-    fetch("", requestOptions)
+    updateShortcutCardExternalLinks(outputs.shortcutCardId, outputs.cardExternalLinks)
         .then(response => response.text())
-        .then(result => console.log(result))
+        .then(result => {
+          console.log(result);
+          say(`The card ${shortcutCardId} was updated`);
+        })
         .catch(error => console.log('error', error));
-
-
-
 
 
 
@@ -184,3 +225,23 @@ app.step(ws);
 
   console.log('⚡️ Bolt app is running!');
 })();
+
+async function updateShortcutCardExternalLinks (cardId, externalLinks) {
+
+  const myHeaders = new fetch.Headers();
+  myHeaders.append("Shortcut-Token", process.env.SHORTCUT_TOKEN);
+  myHeaders.append("Content-Type", "application/json");
+
+  const raw = JSON.stringify({
+    "external_links": externalLinks
+  });
+
+  const requestOptions = {
+    method: 'PUT',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  return fetch(`https://api.app.shortcut.com/api/v3/stories/${cardId}`, requestOptions);
+}
