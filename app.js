@@ -81,13 +81,13 @@ const ws = new WorkflowStep('connect_with_poker', {
   save: async ({ ack, step, view, update }) => {
     await ack();
 
-    const { values } = view.state;
-    const storyId = values.shortcut_story_id_input.description;
-    const pokerLink = values.slack_published_poker_link_input.description;
+    const {values} = view.state;
+    const storyId = values.shortcut_story_id_input.story_id.value;
+    const pokerLink = values.slack_published_poker_link_input.poker_link.value;
 
     const inputs = {
-      storyId: { value: storyId.value },
-      pokerLink: { value: pokerLink.value },
+      storyId: {value: storyId},
+      pokerLink: {value: pokerLink},
     };
 
     const outputs = [
@@ -103,7 +103,7 @@ const ws = new WorkflowStep('connect_with_poker', {
       }
     ];
 
-    await update({ inputs, outputs });
+    await update({inputs, outputs});
   },
   execute: async ({ step, complete, fail }) => {
 
