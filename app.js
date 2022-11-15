@@ -1,5 +1,6 @@
 const { App, WorkflowStep } = require('@slack/bolt');
 const fetch = require("node-fetch");
+require('dotenv').config();
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
