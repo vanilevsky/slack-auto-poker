@@ -21,3 +21,7 @@
     ```zsh
     npm run start
     ```
+
+---
+
+Forked from https://github.com/slackapi/bolt-js-getting-started-app
