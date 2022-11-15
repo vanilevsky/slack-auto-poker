@@ -126,22 +126,34 @@ app.step(ws);
 
 async function updateShortcutCardExternalLinks (cardId, externalLinks) {
 
-  const myHeaders = new fetch.Headers();
-  myHeaders.append("Shortcut-Token", process.env.SHORTCUT_TOKEN);
-  myHeaders.append("Content-Type", "application/json");
+  const headers = new fetch.Headers();
+  headers.append("Shortcut-Token", process.env.SHORTCUT_TOKEN);
+  headers.append("Content-Type", "application/json");
 
-  const raw = JSON.stringify({
-    "external_links": externalLinks, // Replace with new links
-    "labels": [], // Clear labels
+  const shortcutStory = await fetch(`https://api.app.shortcut.com/api/v3/stories/${cardId}`, {
+    method: 'GET',
+    headers: headers,
+    redirect: 'follow'
+  })
+      .then(response => response.text())
+      .then(result => JSON.parse(result))
+      .catch(error => console.log('error', error));
+
+  const putRaw = JSON.stringify({
+    "external_links": collectLinks(shortcutStory, externalLinks),
   });
 
-  const requestOptions = {
+  return fetch(`https://api.app.shortcut.com/api/v3/stories/${cardId}`, {
     method: 'PUT',
-    headers: myHeaders,
-    body: raw,
+    headers: headers,
+    body: putRaw,
     redirect: 'follow'
-  };
+  });
+}
 
-  // @see https://shortcut.com/api/rest/v3#Body-Parameters-40308
-  return fetch(`https://api.app.shortcut.com/api/v3/stories/${cardId}`, requestOptions);
+function collectLinks(shortcutStory, externalLinks) {
+  let existingLinks = shortcutStory.external_links || [];
+  let newLinks = externalLinks || [];
+
+  return existingLinks.concat(newLinks);
 }
