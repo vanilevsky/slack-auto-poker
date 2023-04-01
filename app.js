@@ -5,7 +5,10 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const app = createSlackApp();
+console.log(`ℹ️️ Slack app is created`);
+
 const server = createWebhookServer();
+console.log(`ℹ️️ Webhook server is created`);
 
 const port = process.env.WEBHOOK_PORT;
 server.listen(port, () => {
@@ -15,6 +18,6 @@ server.listen(port, () => {
 app.step(createWorkflowStep());
 
 (async () => {
-  await app.start(process.env.PORT);
+  await app.start();
   console.log('⚡️ Bolt app is running!');
 })();
