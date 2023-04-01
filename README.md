@@ -8,6 +8,38 @@ Slack Auto-Poker is a Node.js application that connects your Shortcut (formerly 
 - A Shortcut account with API access
 - A Slack App with Socket Mode enabled
 
+## Using the SlackAutoPoker App - Brief Workflow
+
+1. In Shortcut, attach a label (e.g., "poker") to the story you want to work with. This triggers the webhook and sends a StoryPlan message to the designated Slack channel.
+2. In the Slack channel, find the StoryPlan message containing the Shortcut story's details (name, URL, and ID).
+3. The created StoryPlan message's link will be automatically attached to the current Shortcut story as an external link.
+
+## Setup
+
+1. Clone this repository to your local machine.
+
+   > git clone https://github.com/yourusername/slack-auto-poker.git
+   > cd slack-auto-poker
+
+2. Install the dependencies.
+
+   > npm install
+
+3. Copy the `.env-sample` file to a new file named `.env` and fill in the required environment variables.
+
+   > cp .env-sample .env
+
+- `SLACK_BOT_TOKEN`: Your Slack bot token (starts with `xoxb-`)
+- `SLACK_APP_TOKEN`: Your Slack app token (starts with `xapp-`)
+- `SHORTCUT_TOKEN`: Your Shortcut API token
+- `SLACK_WEBHOOK_URL`: Your Slack Incoming Webhook URL
+
+4. Run the application.
+   
+   > npm start
+
+   The application will start and listen for updates from Shortcut.
+
 ## Creating a Slack App
 
 1. Visit the [Slack API website](https://api.slack.com/apps) and sign in with your Slack account.
@@ -35,32 +67,6 @@ Slack Auto-Poker is a Node.js application that connects your Shortcut (formerly 
 Once the Slack app and the custom step are integrated into your workflow, the app will be able to automatically update Shortcut cards with poker information when the workflow is executed.
 
 Don't forget to update your `.env` file with the `SLACK_BOT_TOKEN`, `SLACK_APP_TOKEN`, and `SLACK_WEBHOOK_URL` environment variables.
-
-## Setup
-
-1. Clone this repository to your local machine.
-
-   > git clone https://github.com/yourusername/slack-auto-poker.git
-   > cd slack-auto-poker
-
-2. Install the dependencies.
-
-   > npm install
-
-3. Copy the `.env-sample` file to a new file named `.env` and fill in the required environment variables.
-
-   > cp .env-sample .env
-
-- `SLACK_BOT_TOKEN`: Your Slack bot token (starts with `xoxb-`)
-- `SLACK_APP_TOKEN`: Your Slack app token (starts with `xapp-`)
-- `SHORTCUT_TOKEN`: Your Shortcut API token
-- `SLACK_WEBHOOK_URL`: Your Slack Incoming Webhook URL
-
-4. Run the application.
-   
-   > npm start
-
-   The application will start and listen for updates from Shortcut.
 
 ## Webhook Setup
 
