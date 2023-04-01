@@ -4,8 +4,13 @@ const fetch = require('node-fetch');
 function createWebhookServer() {
     const server = express();
     server.use(express.json());
+    server.get('/', rootHandler);
     server.post('/webhook', webhookHandler);
     return server;
+}
+
+async function rootHandler(req, res) {
+    res.status(200).send('Slack Auto-Poker app is running!');
 }
 
 async function webhookHandler(req, res) {
