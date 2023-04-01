@@ -11,8 +11,10 @@ function createWebhookServer() {
     app.post('/webhook', webhookHandler);
 
     const httpsOptions = {
-        key: fs.readFileSync(process.env.KEY_PATH),
-        cert: fs.readFileSync(process.env.CERT_PATH)
+        // key: fs.readFileSync(process.env.KEY_PATH),
+        // cert: fs.readFileSync(process.env.CERT_PATH)
+        key: process.env.CERT_KEY,
+        cert: process.env.CERT_CRT
     };
 
     return https.createServer(httpsOptions, app);
