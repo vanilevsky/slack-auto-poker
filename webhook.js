@@ -1,7 +1,6 @@
 const express = require('express');
 const fetch = require('node-fetch');
-const fs = require("fs");
-const https = require('https');
+const http = require('http');
 
 function createWebhookServer() {
     const app = express();
@@ -10,14 +9,7 @@ function createWebhookServer() {
     app.get('/', rootHandler);
     app.post('/webhook', webhookHandler);
 
-    const httpsOptions = {
-        // key: fs.readFileSync(process.env.KEY_PATH),
-        // cert: fs.readFileSync(process.env.CERT_PATH)
-        key: process.env.CERT_KEY,
-        cert: process.env.CERT_CRT
-    };
-
-    return https.createServer(httpsOptions, app);
+    return http.createServer(app);
 }
 
 async function rootHandler(req, res) {
