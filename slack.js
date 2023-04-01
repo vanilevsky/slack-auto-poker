@@ -5,7 +5,7 @@ function createSlackApp() {
     return new App({
         token: process.env.SLACK_BOT_TOKEN,
         socketMode: true,
-        appToken: process.env.SLACK_APP_TOKEN
+        appToken: process.env.SLACK_APP_TOKEN,
     });
 }
 
@@ -13,14 +13,19 @@ function createWorkflowStep() {
     return new WorkflowStep('connect_with_poker', {
         edit,
         save,
-        execute
+        execute,
     });
 }
 
 async function edit({ ack, step, configure }) {
     await ack();
 
-    const blocks = [
+    const blocks = createInputBlocks();
+    await configure({ blocks });
+}
+
+function createInputBlocks() {
+    return [
         {
             type: 'input',
             block_id: 'shortcut_story_id_input',
@@ -54,23 +59,30 @@ async function edit({ ack, step, configure }) {
             },
         },
     ];
-
-    await configure({ blocks });
 }
 
 async function save({ ack, step, view, update }) {
     await ack();
 
-    const {values} = view.state;
+    const inputs = extractInputs(view);
+    const outputs = createOutputs();
+
+    await update({ inputs, outputs });
+}
+
+function extractInputs(view) {
+    const { values } = view.state;
     const storyId = values.shortcut_story_id_input.story_id.value;
     const pokerLink = values.slack_published_poker_link_input.poker_link.value;
 
-    const inputs = {
-        storyId: {value: storyId},
-        pokerLink: {value: pokerLink},
+    return {
+        storyId: { value: storyId },
+        pokerLink: { value: pokerLink },
     };
+}
 
-    const outputs = [
+function createOutputs() {
+    return [
         {
             type: 'text',
             name: 'storyId',
@@ -80,52 +92,36 @@ async function save({ ack, step, view, update }) {
             type: 'text',
             name: 'pokerLink',
             label: 'Poker link',
-        }
+        },
     ];
-
-    await update({inputs, outputs});
 }
 
 async function execute({ step, complete, fail }) {
-
     const { inputs } = step;
-
-    const outputs = {
-        shortcutCardId: inputs.storyId.value,
-        cardExternalLinks: [
-            inputs.pokerLink.value + '?poker',
-        ]
-    };
+    const outputs = createExecutionOutputs(inputs);
 
     updateShortcutCardExternalLinks(outputs.shortcutCardId, outputs.cardExternalLinks)
-        .then(response => response.text())
-        .then(result => console.log(result))
-        .catch(error => console.log('error', error));
+        .then((response) => response.text())
+        .then((result) => console.log(result))
+        .catch((error) => console.log('error', error));
 
-
-
-
-
-
-    // signal back to Slack that everything was successful
-    // await complete({ outputs });
-    // NOTE: If you run your app with processBeforeResponse: true option,
-    // `await complete()` is not recommended because of the slow response of the API endpoint
-    // which could result in not responding to the Slack Events API within the required 3 seconds
-    // instead, use:
-    complete({outputs}).then(() => {
+    complete({ outputs }).then(() => {
         console.log('workflow step execution complete registered');
     });
 
-    // let Slack know if something went wrong
-    // await fail({ error: { message: "Just testing step failure!" } });
-    // NOTE: If you run your app with processBeforeResponse: true, use this instead:
-    fail({error: {message: "Just testing step failure!"}}).then(() => {
+    fail({ error: { message: 'Just testing step failure!' } }).then(() => {
         console.log('workflow step execution failure registered');
     });
 }
 
+function createExecutionOutputs(inputs) {
+    return {
+        shortcutCardId: inputs.storyId.value,
+        cardExternalLinks: [inputs.pokerLink.value + '?poker'],
+    };
+}
+
 module.exports = {
     createSlackApp,
-    createWorkflowStep
+    createWorkflowStep,
 };
