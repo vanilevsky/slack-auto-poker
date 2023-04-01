@@ -7,8 +7,9 @@ dotenv.config();
 const app = createSlackApp();
 const server = createWebhookServer();
 
-server.listen(process.env.WEBHOOK_PORT || 8000, () => {
-  console.log(`⚡️ Webhook listener is running on port ${process.env.WEBHOOK_PORT || 8000}`);
+const port = process.env.WEBHOOK_PORT || 8000;
+server.listen(port, () => {
+  console.log(`⚡️ Webhook listener is running on port ${port}`);
 });
 
 app.step(createWorkflowStep());
