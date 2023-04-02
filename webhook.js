@@ -22,7 +22,7 @@ async function webhookHandler(req, res) {
     const estimateLabelIds = [15989, 24385];
 
     if (isActionValid(action, estimateLabelIds)) {
-        const webhookData = createWebhookData(action);
+        const webhookData = createWebhookData(action, estimateLabelIds);
         await sendWebhookRequest(webhookData);
     }
 
@@ -48,11 +48,19 @@ function isActionValid(action, estimateLabelIds) {
     );
 }
 
-function createWebhookData(action) {
+/**
+ * @param action
+ * @param estimateLabelIds
+ * @returns Object {"shortcut_story_name": String, "shortcut_story_url": String, "shortcut_story_id": String, "shortcut_label_id": String}
+ */
+function createWebhookData(action, estimateLabelIds) {
+    let labelId = action.changes.label_ids.adds.find(item => estimateLabelIds.includes(item));
+
     return {
         shortcut_story_name: action.name,
         shortcut_story_url: action.app_url,
         shortcut_story_id: String(action.id),
+        shortcut_label_id: String(labelId),
     };
 }
 
@@ -65,7 +73,6 @@ async function sendWebhookRequest(webhookData) {
     });
 
     const result = await response.text();
-    console.log(result);
 }
 
 module.exports = {
