@@ -22,6 +22,10 @@
     {
       "src": "/slack/events",
       "dest": "slack-app.js"
+    },
+    {
+      "src": "/slack/interactive-endpoint",
+      "dest": "slack-app.js"
     }
   ]
 }

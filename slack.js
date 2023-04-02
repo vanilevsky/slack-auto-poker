@@ -12,7 +12,7 @@ function createSlackApp() {
         receiver: receiver,
     });
 
-    return { app, expressApp: receiver.app };
+    return { app };
 }
 
 function createWorkflowStep() {
@@ -24,10 +24,19 @@ function createWorkflowStep() {
 }
 
 async function edit({ ack, step, configure }) {
-    await ack();
+    try {
+        await ack();
+    } catch (error) {
+        console.error('Error acknowledging the workflow step:', error);
+    }
 
     const blocks = createInputBlocks();
-    await configure({ blocks });
+
+    try {
+        await configure({ blocks });
+    } catch (error) {
+        console.error('Error configuring the workflow step:', error);
+    }
 }
 
 function createInputBlocks() {
@@ -103,21 +112,31 @@ function createOutputs() {
 }
 
 async function execute({ step, complete, fail }) {
-    const { inputs } = step;
-    const outputs = createExecutionOutputs(inputs);
+    const outputs = {}; // Empty outputs object
+    await complete({ outputs });
+    console.log('workflow step execution complete registered (stub)');
 
-    updateShortcutCardExternalLinks(outputs.shortcutCardId, outputs.cardExternalLinks)
-        .then((response) => response.text())
-        .then((result) => console.log(result))
-        .catch((error) => console.log('error', error));
-
-    complete({ outputs }).then(() => {
-        console.log('workflow step execution complete registered');
-    });
-
-    fail({ error: { message: 'Just testing step failure!' } }).then(() => {
-        console.log('workflow step execution failure registered');
-    });
+    // const { inputs } = step;
+    // const outputs = createExecutionOutputs(inputs);
+    //
+    // updateShortcutCardExternalLinks(outputs.shortcutCardId, outputs.cardExternalLinks)
+    //     .then((response) => response.text())
+    //     .then((result) => {
+    //         console.log(result);
+    //
+    //         // Call complete() method if the update is successful
+    //         return complete({ outputs }).then(() => {
+    //             console.log('workflow step execution complete registered');
+    //         });
+    //     })
+    //     .catch((error) => {
+    //         console.log('error', error);
+    //
+    //         // Call fail() method if there's an error during the update
+    //         return fail({ error: { message: 'Failed to update the shortcut card' } }).then(() => {
+    //             console.log('workflow step execution failure registered');
+    //         });
+    //     });
 }
 
 function createExecutionOutputs(inputs) {
