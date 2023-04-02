@@ -12,16 +12,20 @@
   ],
   "routes": [
     {
-      "src": "/slack-app",
+      "src": "/",
+      "dest": "webhook-server.js"
+    },
+    {
+      "src": "/webhook",
+      "dest": "webhook-server.js"
+    },
+    {
+      "src": "/slack/events",
       "dest": "slack-app.js"
     },
     {
-      "src": "/webhook-server",
-      "dest": "webhook-server.js"
-    },
-    {
-      "src": "/",
-      "dest": "webhook-server.js"
+      "src": "/slack/interactive-endpoint",
+      "dest": "slack-app.js"
     }
   ]
 }

@@ -13,7 +13,7 @@ function createWebhookServer() {
 }
 
 async function rootHandler(req, res) {
-    res.status(200).send('Slack Auto-Poker app is running!');
+    res.status(200).send('OK');
 }
 
 async function webhookHandler(req, res) {

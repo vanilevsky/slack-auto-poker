@@ -7,10 +7,12 @@ function createSlackApp() {
         signingSecret: process.env.SLACK_SIGNING_SECRET,
     });
 
-    return new App({
+    const app = new App({
         token: process.env.SLACK_BOT_TOKEN,
-        receiver,
+        receiver: receiver,
     });
+
+    return { app, expressApp: receiver.app };
 }
 
 function createWorkflowStep() {

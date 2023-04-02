@@ -1,22 +1,20 @@
-const express = require('express');
-const { createSlackApp, createWorkflowStep } = require('./slack');
+const { createSlackApp } = require('./slack');
+const { createWorkflowStep } = require('./slack');
 const dotenv = require('dotenv');
 
 dotenv.config();
 
-const app = createSlackApp();
+const { app, expressApp } = createSlackApp(); // Destructure both app and expressApp
 console.log(`ℹ️️ Slack app is created`);
 
 app.step(createWorkflowStep());
 console.log(`ℹ️️ Workflow created`);
 
-const server = express();
-const port = process.env.PORT || 3000;
+// Start the Slack app
+(async () => {
+    console.log('ℹ️ Bolt app is starting...');
+    await app.start(process.env.PORT || 3000);
+    console.log('⚡️ Bolt app is running!');
+})();
 
-server.use(app.receiver.router); // Attach the Slack app's built-in receiver
-
-server.listen(port, () => {
-    console.log(`⚡️ Server is running on port ${port}`);
-});
-
-module.exports = server;
+module.exports = expressApp; // Export the Express app
