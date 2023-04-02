@@ -1,11 +1,15 @@
-const { App, WorkflowStep } = require('@slack/bolt');
+const { App, ExpressReceiver, WorkflowStep } = require('@slack/bolt');
 const { updateShortcutCardExternalLinks } = require('./shortcut');
 
 function createSlackApp() {
+
+    const receiver = new ExpressReceiver({
+        signingSecret: process.env.SLACK_SIGNING_SECRET,
+    });
+
     return new App({
         token: process.env.SLACK_BOT_TOKEN,
-        socketMode: true,
-        appToken: process.env.SLACK_APP_TOKEN,
+        receiver,
     });
 }
 

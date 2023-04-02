@@ -2,14 +2,26 @@
   "version": 2,
   "builds": [
     {
-      "src": "app.js",
+      "src": "slack-app.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "webhook-server.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "app.js"
+      "src": "/slack-app",
+      "dest": "slack-app.js"
+    },
+    {
+      "src": "/webhook-server",
+      "dest": "webhook-server.js"
+    },
+    {
+      "src": "/",
+      "dest": "webhook-server.js"
     }
   ]
 }

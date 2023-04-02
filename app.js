@@ -10,7 +10,7 @@ console.log(`ℹ️️ Slack app is created`);
 const server = createWebhookServer();
 console.log(`ℹ️️ Webhook server is created`);
 
-const port = process.env.WEBHOOK_PORT;
+const port = process.env.WEBHOOK_PORT || 3000;
 server.listen(port, () => {
   console.log(`⚡️ Webhook listener is running on port ${port}`);
 });
