@@ -65,14 +65,11 @@ function createWebhookData(action, estimateLabelIds) {
 }
 
 async function sendWebhookRequest(webhookData) {
-    const slackWebhook = process.env.SLACK_WEBHOOK_URL;
-    const response = await fetch(slackWebhook, {
+    await fetch(process.env.SLACK_WEBHOOK_URL, {
         method: 'POST',
         body: JSON.stringify(webhookData),
         headers: { 'Content-Type': 'application/json' },
     });
-
-    const result = await response.text();
 }
 
 module.exports = {
