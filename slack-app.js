@@ -134,7 +134,4 @@ console.log(`ℹ️️ Workflow created`);
     console.log(`⚡️ Bolt app is running on port ${port}!`);
 })();
 
-// Export a serverless function
-module.exports = async (req, res) => {
-    await app.receiver.requestHandler(req, res, { requestHeaders: req.headers });
-};
+module.exports = app;

@@ -4,13 +4,9 @@ const {LogLevel} = require("@slack/web-api");
 
 function createSlackApp() {
 
-    const receiver = new ExpressReceiver({
-        signingSecret: process.env.SLACK_SIGNING_SECRET,
-    });
-
     const app = new App({
         token: process.env.SLACK_BOT_TOKEN,
-        receiver: receiver,
+        signingSecret: process.env.SLACK_SIGNING_SECRET,
 
         // LogLevel can be imported and used to make debugging simpler
         logLevel: LogLevel.DEBUG
