@@ -103,25 +103,20 @@ const {LogLevel} = require("@slack/web-api");
 
             const outputs = {
                 shortcutCardId: inputs.storyId.value,
-                cardExternalLinks: [
-                    inputs.pokerLink.value + '?poker',
-                ]
+                cardExternalLinks: [inputs.pokerLink.value + '?poker'],
             };
+            const outputsString = JSON.stringify(outputs);
 
             updateShortcutCardExternalLinks(outputs.shortcutCardId, outputs.cardExternalLinks)
                 .then(response => response.text())
                 .then(result => console.log(result))
                 .catch(error => console.log('error', error));
 
-
-            // signal back to Slack that everything was successful
-            // await complete({ outputs });
-            // NOTE: If you run your app with processBeforeResponse: true option,
-            // `await complete()` is not recommended because of the slow response of the API endpoint
-            // which could result in not responding to the Slack Events API within the required 3 seconds
-            // instead, use:
-            complete({outputs}).then(() => {
-                console.log('workflow step execution complete registered');
+            complete({outputs: outputsString}).then(() => {
+                console.log('workflow step execution successful');
+            }).catch((error) => {
+                console.log('workflow step execution failure', error);
+                fail({error: 'An error occurred while completing the step.'});
             });
 
             // let Slack know if something went wrong
