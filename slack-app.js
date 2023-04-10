@@ -31,7 +31,7 @@ const {LogLevel} = require("@slack/web-api");
 
     const ws = new WorkflowStep('connect_with_poker', {
         edit: async ({ack, step, configure}) => {
-            await ack(res);
+            await ack();
 
             const blocks = [
                 {
@@ -71,7 +71,7 @@ const {LogLevel} = require("@slack/web-api");
             await configure({blocks});
         },
         save: async ({ack, step, view, update}) => {
-            await ack(res);
+            await ack();
 
             const {values} = view.state;
             const storyId = values.shortcut_story_id_input.story_id.value;
