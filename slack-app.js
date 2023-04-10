@@ -1,7 +1,7 @@
-const { createSlackApp } = require('./slack');
-const { createWorkflowStep } = require('./slack');
+const { createSlackApp, createWorkflowStep } = require('./slack');
 const dotenv = require('dotenv');
-const {WorkflowStep} = require("@slack/bolt");
+const { WorkflowStep } = require("@slack/bolt");
+const { updateShortcutCardExternalLinks } = require("./shortcut");
 
 dotenv.config();
 
@@ -20,38 +20,6 @@ const ws = new WorkflowStep('connect_with_poker', {
         await ack();
 
         const blocks = [
-            {
-                type: 'input',
-                block_id: 'task_name_input',
-                element: {
-                    type: 'plain_text_input',
-                    action_id: 'name',
-                    placeholder: {
-                        type: 'plain_text',
-                        text: 'Add a task name',
-                    },
-                },
-                label: {
-                    type: 'plain_text',
-                    text: 'Task name',
-                },
-            },
-            {
-                type: 'input',
-                block_id: 'task_description_input',
-                element: {
-                    type: 'plain_text_input',
-                    action_id: 'description',
-                    placeholder: {
-                        type: 'plain_text',
-                        text: 'Add a task description',
-                    },
-                },
-                label: {
-                    type: 'plain_text',
-                    text: 'Task description',
-                },
-            },
             {
                 type: 'input',
                 block_id: 'shortcut_story_id_input',
@@ -91,30 +59,16 @@ const ws = new WorkflowStep('connect_with_poker', {
     save: async ({ ack, step, view, update }) => {
         await ack();
 
-        const { values } = view.state;
-        const taskName = values.task_name_input.name;
-        const taskDescription = values.task_description_input.description;
-        const storyId = values.shortcut_story_id_input.description;
-        const pokerLink = values.slack_published_poker_link_input.description;
+        const {values} = view.state;
+        const storyId = values.shortcut_story_id_input.story_id.value;
+        const pokerLink = values.slack_published_poker_link_input.poker_link.value;
 
         const inputs = {
-            taskName: { value: taskName.value },
-            taskDescription: { value: taskDescription.value },
-            storyId: { value: storyId.value },
-            pokerLink: { value: pokerLink.value },
+            storyId: {value: storyId},
+            pokerLink: {value: pokerLink},
         };
 
         const outputs = [
-            {
-                type: 'text',
-                name: 'taskName',
-                label: 'Task name',
-            },
-            {
-                type: 'text',
-                name: 'taskDescription',
-                label: 'Task description',
-            },
             {
                 type: 'text',
                 name: 'storyId',
@@ -127,15 +81,13 @@ const ws = new WorkflowStep('connect_with_poker', {
             }
         ];
 
-        await update({ inputs, outputs });
+        await update({inputs, outputs});
     },
     execute: async ({ step, complete, fail }) => {
 
         const { inputs } = step;
 
         const outputs = {
-            taskName: inputs.taskName.value,
-            taskDescription: inputs.taskDescription.value,
             shortcutCardId: inputs.storyId.value,
             cardExternalLinks: [
                 inputs.pokerLink.value + '?poker',
@@ -144,10 +96,7 @@ const ws = new WorkflowStep('connect_with_poker', {
 
         updateShortcutCardExternalLinks(outputs.shortcutCardId, outputs.cardExternalLinks)
             .then(response => response.text())
-            .then(result => {
-                console.log(result);
-                say(`The card ${shortcutCardId} was updated`);
-            })
+            .then(result => console.log(result))
             .catch(error => console.log('error', error));
 
 

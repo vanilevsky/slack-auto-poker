@@ -1,5 +1,6 @@
 const { App, ExpressReceiver, WorkflowStep } = require('@slack/bolt');
 const { updateShortcutCardExternalLinks } = require('./shortcut');
+const {LogLevel} = require("@slack/web-api");
 
 function createSlackApp() {
 
@@ -10,6 +11,9 @@ function createSlackApp() {
     const app = new App({
         token: process.env.SLACK_BOT_TOKEN,
         receiver: receiver,
+
+        // LogLevel can be imported and used to make debugging simpler
+        logLevel: LogLevel.DEBUG
     });
 
     return { app };
