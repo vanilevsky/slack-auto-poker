@@ -134,4 +134,23 @@ console.log(`ℹ️️ Workflow created`);
     console.log(`⚡️ Bolt app is running on port ${port}!`);
 })();
 
-module.exports = app;
+module.exports = (req, res) => {
+
+    console.log('req.body.text:', req.body.text);
+
+    // const commandArray = tokenizeString(req.body.text)
+    // const action = commandArray[0]
+    //
+    // switch (action) {
+    //     case "set": setKey(res, commandArray); break
+    //     case "get": getKey(res, commandArray); break
+    //     case "list-set": addToList(res, commandArray); break
+    //     case "list-all": listAll(res, commandArray); break
+    //     case "list-remove": removeFromList(res, commandArray); break
+    //     default:
+    //         res.send({
+    //             "response_type": "ephemeral",
+    //             "text": "Wrong usage of the command!"
+    //         })
+    // }
+}
