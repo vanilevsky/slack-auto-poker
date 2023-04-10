@@ -4,11 +4,7 @@ const {WorkflowStep, ExpressReceiver, App} = require("@slack/bolt");
 const {updateShortcutCardExternalLinks} = require("./shortcut");
 const {LogLevel} = require("@slack/web-api");
 
-dotenv.config();
-
-module.exports = (req, res) => {
-
-    console.log('(req, res): ', req, res);
+    dotenv.config();
 
     const receiver = new ExpressReceiver({
         signingSecret: process.env.SLACK_SIGNING_SECRET,
@@ -168,4 +164,3 @@ module.exports = (req, res) => {
     //             "text": "Wrong usage of the command!"
     //         })
     // }
-}
